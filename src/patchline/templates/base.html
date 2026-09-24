@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Patchline{% endblock %}</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="app-header">
+    <div class="brand"><a href="/">Patchline</a></div>
+    {% if demo_mode %}
+    <div class="demo-banner" role="status">Demo Mode — no real GitHub data</div>
+    {% endif %}
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="/">Coverage</a></li>
+        <li><a href="/repositories">Repositories</a></li>
+        <li><a href="/connections/setup">Connections</a></li>
+        <li><a href="/entries/new">New entry</a></li>
+        <li><a href="/pull-requests">Pull requests</a></li>
+        <li><a href="/jobs">Jobs</a></li>
+        <li><a href="/settings">Settings</a></li>
+        <li><a href="/logout">Sign out</a></li>
+      </ul>
+    </nav>
+  </header>
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+  <footer class="app-footer">
+    <span>Patchline v{{ app_version }}</span>
+  </footer>
+</body>
+</html>

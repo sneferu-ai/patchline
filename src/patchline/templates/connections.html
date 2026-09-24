@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Connections — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="connections-heading">
+  <h1 id="connections-heading">Connection setup</h1>
+  {% if request.query_params.get('error') %}
+  <div class="alert error" role="alert">Re-check failed: the GitHub API could not be reached. Try again.</div>
+  {% endif %}
+  {% if request.query_params.get('rechecked') %}
+  <div class="alert success" role="status">Installations re-checked against GitHub.</div>
+  {% endif %}
+  <div class="panel">
+    <h2>Install link</h2>
+    <p>Share this link with a customer to connect their repositories. They install the Patchline GitHub App and choose which repositories to grant.</p>
+    <p>
+      <code id="install-url">{{ install_url }}</code>
+      <button type="button" class="button" onclick="navigator.clipboard && navigator.clipboard.writeText(document.getElementById('install-url').textContent)">Copy</button>
+    </p>
+  </div>
+  <div class="panel">
+    <h2>Installations</h2>
+    <form method="post" action="/connections/recheck">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="button">Re-check installations</button>
+    </form>
+    {% if installations %}
+    <div class="table-wrap" role="region" aria-live="polite" aria-label="Installations">
+      <table>
+        <thead><tr><th scope="col">Account</th><th scope="col">Type</th><th scope="col">State</th><th scope="col">Repositories</th></tr></thead>
+        <tbody>
+          {% for inst in installations %}
+          <tr>
+            <td>{{ inst.account_login }}</td>
+            <td>{{ inst.account_type }}</td>
+            <td><span class="status status-{{ inst.connection_state }}">{{ inst.connection_state }}</span></td>
+            <td>{{ repo_counts.get(inst.id, 0) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty" role="status"><p>Share this link with a customer to connect their first repository.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

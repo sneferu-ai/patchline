@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Review — {{ repo.full_name }}{% endblock %}
+{% block content %}
+<section aria-labelledby="review-heading">
+  <h1 id="review-heading">Review remediation: {{ repo.full_name }}</h1>
+  <p class="muted">Entry: <a href="/entries/{{ entry.id }}">{{ entry.title }}</a> · default branch: {{ repo.default_branch }}</p>
+
+  {% if request.query_params.get('dispatch') == 'failed' %}
+  <div class="alert error" role="alert">Dispatch failed. You can retry, download the diff and apply it manually, or mark the repository as migrated manually.</div>
+  {% endif %}
+  {% if request.query_params.get('simulated') %}
+  <div class="alert success" role="status">Demo Mode — dispatch simulated; no real PR was created.</div>
+  {% endif %}
+  {% if stale_confirmation %}
+  <div class="alert warn" role="alert">This remediation was regenerated after a previous approval. The earlier approval no longer applies — review the new diff and approve again.</div>
+  {% endif %}
+
+  {% if remediation is none %}
+    <div class="empty" role="status"><p>No remediation generated yet. Generate one once a default-branch scan has found occurrences.</p></div>
+    <form method="post" action="/entries/{{ entry.id }}/repos/{{ repo.id }}/generate">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="button primary">Generate remediation</button>
+    </form>
+  {% elif remediation.status == 'generating' %}
+    <div class="alert info" role="status" aria-live="polite">Generating the remediation diff… reload in a moment.</div>
+  {% elif remediation.status == 'generation_failed' %}
+    <div class="alert error" role="alert">Remediation generation failed: {{ remediation.error_message }}</div>
+    <form method="post" action="/entries/{{ entry.id }}/repos/{{ repo.id }}/generate">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="button">Retry generation</button>
+    </form>
+  {% else %}
+    <div class="alert warn" role="note">Syntax validation passed. This does not guarantee semantic correctness. Review the diff carefully.</div>
+
+    {% if provenance and (provenance.quality_score is not none or provenance.certificate_class or provenance.disagreement_record or provenance.models) %}
+    <aside class="panel provenance" aria-label="Engine provenance">
+      <h2>Provenance</h2>
+      <ul>
+        {% if remediation.engine_run_id %}<li>Engine run id: {{ remediation.engine_run_id }}</li>{% endif %}
+        {% if provenance.quality_score is not none %}<li>Quality score: {{ provenance.quality_score }}</li>{% endif %}
+        {% if provenance.certificate_class %}<li>Certificate class: {{ provenance.certificate_class }}</li>{% endif %}
+        {% if provenance.disagreement_record %}<li>Disagreement record: <a href="{{ provenance.disagreement_record }}">{{ provenance.disagreement_record }}</a></li>{% endif %}
+        {% if provenance.models %}<li>Models involved: {{ provenance.models | join(', ') }}</li>{% endif %}
+      </ul>
+    </aside>
+    {% else %}
+    <aside class="panel provenance" aria-label="Engine provenance"><p class="muted">Provenance not available from the engine for this remediation.</p></aside>
+    {% endif %}
+
+    <div class="panel diff-view" aria-label="Proposed unified diff">
+      <h2>Proposed diff</h2>
+      {% for file in diff_files %}
+      <details class="diff-file" open>
+        <summary><code>{{ file.path }}</code></summary>
+        <pre class="code diff" tabindex="0">{% for line in file.lines %}<span class="line-{{ line.kind }}">{{ line.text }}
+</span>{% endfor %}</pre>
+      </details>
+      {% else %}
+      <pre class="code diff" tabindex="0">{{ remediation.diff_content }}</pre>
+      {% endfor %}
+      <p class="muted">diff sha256: <code>{{ remediation.diff_sha256 }}</code></p>
+    </div>
+
+    <div class="actions">
+      {% if remediation.status in ['ready', 'dispatch_failed'] %}
+      <form method="post" action="/entries/{{ entry.id }}/repos/{{ repo.id }}/approve">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="button primary">Approve and open PR</button>
+        {% if dispatch_disabled %}<span class="muted">Demo Mode — dispatch is simulated</span>{% endif %}
+      </form>
+      <form method="post" action="/entries/{{ entry.id }}/repos/{{ repo.id }}/generate" class="inline-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <button type="submit" class="button small">Regenerate</button>
+      </form>
+      {% endif %}
+      {% if remediation.status == 'dispatch_failed' %}
+      <p>
+        <a class="button" href="/entries/{{ entry.id }}/repos/{{ repo.id }}/review/diff.patch">Download diff (.patch)</a>
+      </p>
+      <form method="post" action="/entries/{{ entry.id }}/repos/{{ repo.id }}/mark-migrated"
+            onsubmit="return confirm('Are you sure? This sets the coverage status to \'migrated (manual)\' without verification. You are responsible for confirming the pattern was removed.');">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="confirm" value="yes">
+        <button type="submit" class="button warn">Mark as migrated manually</button>
+      </form>
+      {% endif %}
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

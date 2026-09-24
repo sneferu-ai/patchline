@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ entry.title }} — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="entry-heading">
+  <h1 id="entry-heading">{{ entry.title }}</h1>
+  <p>
+    <span class="status status-{{ entry.status }}">{{ entry.status }}</span>
+    <span class="muted">language: {{ entry.language }} · slug: {{ entry.slug }} · created {{ entry.created_at }}</span>
+  </p>
+  {% if entry.status == 'ready' %}
+  <p class="note">This entry is immutable. To change it, author a new entry.</p>
+  <p><a class="button primary" href="/entries/{{ entry.id }}/scan">Open scan console</a> <a class="button" href="/entries/{{ entry.id }}/coverage">Coverage</a></p>
+  {% elif entry.status == 'draft' %}
+  <div class="alert info" role="status" aria-live="polite">Deriving patterns… this page updates once derivation completes.</div>
+  {% elif entry.status == 'derivation_failed' %}
+  <div class="alert error" role="alert">Pattern derivation failed. Check the jobs console, then author a new entry to retry.</div>
+  {% endif %}
+
+  <div class="panel">
+    <h2>Prior API shape</h2>
+    <pre class="prose">{{ entry.prior_api_shape }}</pre>
+  </div>
+  <div class="panel">
+    <h2>Target contract</h2>
+    <pre class="prose">{{ entry.target_contract }}</pre>
+  </div>
+
+  <div class="panel" aria-live="polite">
+    <h2>Derived patterns (read-only)</h2>
+    {% if pattern %}
+    <p class="muted">engine run id: {{ pattern.engine_run_id }} · derived {{ pattern.created_at }}</p>
+    <pre class="code">{{ pattern_json | tojson(indent=2) }}</pre>
+    {% else %}
+    <div class="empty" role="status"><p>No derived patterns yet.</p></div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Feedback flags</h2>
+    {% if flags %}
+    <ul>
+      {% for flag in flags %}
+      <li>occurrence #{{ flag.occurrence_id }} — {{ flag.reason or 'false positive' }} <span class="muted">({{ flag.created_at }})</span></li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty" role="status"><p>No feedback flags for this entry. Flag false positives from the scan console.</p></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

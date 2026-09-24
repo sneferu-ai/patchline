@@ -1,0 +1,6 @@
+# Packaging: include rendered assets (templates + static JS/CSS) in distributions.
+recursive-include src/patchline/templates *.html
+recursive-include src/patchline/static *.css *.js
+include LICENSE CHANGELOG.md SECURITY.md README.md .env.example
+recursive-include alembic *.py *.mako
+include alembic.ini

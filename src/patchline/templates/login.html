@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Sign in — Patchline{% endblock %}
+{% block content %}
+<section class="panel narrow" aria-labelledby="signin-heading">
+  <h1 id="signin-heading">Sign in to Patchline</h1>
+  {% if error %}
+  <div class="alert error" role="alert">
+    {% if error == 'misconfigured allowlist' %}
+      Sign-in is unavailable: the deployment allowlist is misconfigured. Contact the operator.
+    {% elif error == 'authorization changed' %}
+      Your authorization changed. Please sign in again with the allowlisted GitHub account.
+    {% else %}
+      {{ error }}
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if step_up %}
+  <p class="alert info" role="status">For your security, please re-authenticate with GitHub before approving a dispatch.</p>
+  {% endif %}
+  <p>Sign in with the allowlisted GitHub account to manage change propagation to customer repositories.</p>
+  <p>
+    <a class="button primary" href="/login/start{% if redirect_to and redirect_to != '/' %}?redirect_to={{ redirect_to | urlencode }}{% endif %}{% if step_up %}&amp;step_up=1{% endif %}">Sign in with GitHub</a>
+  </p>
+</section>
+{% endblock %}

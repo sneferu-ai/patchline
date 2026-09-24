@@ -1,0 +1,15 @@
+{
+  "fixtures_version": "1.0",
+  "installations": [
+    {
+      "id": 77001,
+      "account_login": "acme",
+      "account_type": "Organization"
+    },
+    {
+      "id": 77002,
+      "account_login": "globex",
+      "account_type": "User"
+    }
+  ]
+}

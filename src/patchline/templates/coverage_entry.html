@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Coverage — {{ entry.title }}{% endblock %}
+{% block content %}
+<section aria-labelledby="entry-coverage-heading">
+  <h1 id="entry-coverage-heading">Coverage: {{ entry.title }}</h1>
+  <p class="note">Verification is best-effort. The 'migrated' status means a scan at this point in time found zero occurrences of the old pattern. It does not guarantee the exact approved remediation was applied. Re-scan manually to confirm current state.</p>
+  {% if items %}
+  <div class="table-wrap" role="region" aria-live="polite" aria-label="Per-repository coverage for this entry">
+    <table>
+      <thead>
+        <tr><th scope="col">Repository</th><th scope="col">Status</th><th scope="col">Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><a href="/repositories/{{ item.repo.id }}/coverage">{{ item.repo.full_name }}</a></td>
+          <td><span class="status status-{{ item.status }}">{{ item.label }}</span></td>
+          <td>
+            <a href="/entries/{{ entry.id }}/scan">Scan console</a>
+            {% if item.status in ['pattern_detected', 'remediation_pending', 'dispatch_failed', 'migration_incomplete'] %}
+            · <a href="/entries/{{ entry.id }}/repos/{{ item.repo.id }}/review">Review</a>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty" role="status"><p>No connected repositories yet.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

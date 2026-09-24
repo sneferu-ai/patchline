@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Settings — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="settings-heading">
+  <h1 id="settings-heading">Settings</h1>
+  <div class="panel">
+    <h2>Sneferu Engine</h2>
+    <dl>
+      <dt>Engine</dt><dd>Sneferu Engine</dd>
+      <dt>Mode</dt><dd>{{ engine_mode }}</dd>
+      <dt>Engine version</dt><dd>{{ engine_version if engine_version else 'Engine version: unavailable' }}</dd>
+      <dt>Instance id</dt><dd>{{ instance_id }}</dd>
+      <dt>App version</dt><dd>{{ app_version }}</dd>
+      <dt>Demo mode</dt><dd>{{ 'on' if demo_mode else 'off' }}</dd>
+    </dl>
+  </div>
+  <div class="panel">
+    <h2>Language packs</h2>
+    <p>Installed: {{ languages | join(', ') }} · default: {{ default_language }}</p>
+  </div>
+  <div class="panel">
+    <h2>Recent engine run ids</h2>
+    {% if run_ids %}
+    <ul>{% for rid in run_ids %}<li><code>{{ rid }}</code></li>{% endfor %}</ul>
+    {% else %}
+    <p class="muted">No engine runs recorded yet.</p>
+    {% endif %}
+  </div>
+  <div class="panel">
+    <h2>Webhooks</h2>
+    <p>Deliveries: {{ deliveries_total }} total, {{ deliveries_failed }} failed</p>
+    <p>Notification webhook: {{ notification_status }}</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,6 @@
+{
+  "title": "Rename get_user to get_user_by_id",
+  "prior_api_shape": "The function get_user(id) accepts a numeric user ID and returns a User object with fields: id, name, email.",
+  "target_contract": "The function is now get_user_by_id(id) and returns a User object with fields: id, name, email, created_at. The old function name is deprecated.",
+  "language": "python"
+}

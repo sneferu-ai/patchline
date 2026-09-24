@@ -1,0 +1,59 @@
+{% if engine_failures and engine_failures >= 3 %}
+<div class="alert error" role="alert">The engine has been unreachable for {{ engine_failures }} consecutive job failures. Scans will keep retrying; check Settings.</div>
+{% endif %}
+{% if cards %}
+  {% for card in cards %}
+  <article class="panel repo-card" aria-label="Scan results for {{ card.repo.full_name if card.repo else 'unknown' }}">
+    <h2>{{ card.repo.full_name if card.repo else 'unknown' }}</h2>
+    {% if card.repo %}
+    <form method="post" action="/entries/{{ request.path_params.get('entry_id') or card.branches[0].job.entry_id }}/repos/{{ card.repo.id }}/rescan" class="inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <button type="submit" class="button small">Rescan</button>
+    </form>
+    {% endif %}
+    <details>
+      <summary>Per-branch breakdown ({{ card.branches | length }} branch{{ 'es' if card.branches | length != 1 else '' }})</summary>
+      <table>
+        <thead><tr><th scope="col">Branch</th><th scope="col">State</th><th scope="col">Occurrences</th><th scope="col">Files examined</th></tr></thead>
+        <tbody>
+          {% for item in card.branches %}
+          <tr>
+            <td>{{ item.job.branch }}{% if item.is_default %} <span class="badge">default</span>{% endif %}</td>
+            <td><span class="status status-{{ item.job.status }}">{{ item.job.status }}</span>{% if item.job.error_message %} <span class="muted" title="{{ item.job.error_message }}">ⓘ</span>{% endif %}</td>
+            <td>{{ item.job.occurrences_count }}</td>
+            <td>{{ item.job.files_examined }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </details>
+    {% for item in card.branches %}
+      {% if item.is_default and item.occurrences %}
+      <details>
+        <summary>Occurrences on {{ item.job.branch }} ({{ item.occurrences | length }})</summary>
+        <ul class="occurrence-list">
+          {% for occ in item.occurrences %}
+          <li>
+            <code>{{ occ.file_path }}:{{ occ.line_start }}{% if occ.line_end != occ.line_start %}–{{ occ.line_end }}{% endif %}</code>
+            {% if occ.confidence %}<span class="badge">{{ occ.confidence }}</span>{% endif %}
+            <pre class="code">{{ occ.snippet }}</pre>
+            <form method="post" action="/occurrences/{{ occ.id }}/flag" class="inline-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" class="button small">Flag as false positive</button>
+            </form>
+          </li>
+          {% endfor %}
+        </ul>
+      </details>
+      {% elif not item.is_default and item.job.status == 'done' %}
+      <p class="muted">{{ item.job.branch }}: {{ item.job.occurrences_count }} occurrence{{ 's' if item.job.occurrences_count != 1 else '' }} (informational; remediation operates on the default branch only).</p>
+      {% endif %}
+    {% endfor %}
+    {% if card.repo %}
+    <p><a href="/entries/{{ card.branches[0].job.entry_id }}/repos/{{ card.repo.id }}/review">Review remediation →</a></p>
+    {% endif %}
+  </article>
+  {% endfor %}
+{% else %}
+<div class="empty" role="status"><p>No scans yet. Trigger one above.</p></div>
+{% endif %}

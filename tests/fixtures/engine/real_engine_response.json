@@ -1,0 +1,41 @@
+{
+  "fixture_version": "1.0",
+  "description": "SYNTHETIC engine response shapes for the AC-026 contract test (not recorded from a live Sneferu instance: the orchestrator exposes no /workflows/{name}/run route). Unknown fields (trace_id) must land in Provenance.extra; workflow names are selected from WorkflowConfig.",
+  "version": {"version": "sneferu-2026.08-rc1"},
+  "derive": {
+    "patterns": [
+      {"kind": "symbol_rename", "old": "get_user", "new": "get_user_by_id", "confidence": 0.94},
+      {"kind": "return_shape", "added_fields": ["created_at"]}
+    ],
+    "engine_run_id": "sneferu-run-7f3a9c1e",
+    "language": "python"
+  },
+  "scan": {
+    "occurrences": [
+      {
+        "file_path": "src/client/api.py",
+        "line_start": 5,
+        "line_end": 5,
+        "snippet": "    user = get_user(user_id)",
+        "confidence": "high"
+      }
+    ],
+    "files_examined": 21,
+    "engine_run_id": "sneferu-run-8b4d2e0f"
+  },
+  "remediate": {
+    "diff": "--- a/src/client/api.py\n+++ b/src/client/api.py\n@@ -4,3 +4,3 @@\n def load_user(user_id):\n-    user = get_user(user_id)\n+    user = get_user_by_id(user_id)\n     return user\n",
+    "engine_run_id": "sneferu-run-9c5e3f1a",
+    "provenance": {
+      "quality_score": 0.93,
+      "certificate_class": "cross-lineage-converged",
+      "disagreement_record": "https://sneferu.example/runs/9c5e3f1a/disagreements",
+      "models": ["kimi-k2p6", "glm-5p2"],
+      "trace_id": "01J4ZXY8KRECORDEDTRACE"
+    }
+  },
+  "remediate_no_provenance": {
+    "diff": "--- a/src/client/api.py\n+++ b/src/client/api.py\n@@ -4,3 +4,3 @@\n def load_user(user_id):\n-    user = get_user(user_id)\n+    user = get_user_by_id(user_id)\n     return user\n",
+    "engine_run_id": "sneferu-run-0d6f4a2b"
+  }
+}

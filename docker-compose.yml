@@ -1,0 +1,17 @@
+# Convenience compose file for local evaluation. Production runs the single
+# container directly (web + worker supervised by the entrypoint, §8).
+services:
+  patchline:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:////data/patchline.db
+    volumes:
+      - patchline-data:/data
+    restart: unless-stopped
+
+volumes:
+  patchline-data:

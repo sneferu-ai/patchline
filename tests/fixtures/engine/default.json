@@ -1,0 +1,29 @@
+{
+  "fixture_version": "1.0",
+  "patterns": [{"kind": "symbol_rename", "old": "get_user", "new": "get_user_by_id"}],
+  "occurrences": [
+    {
+      "file_path": "src/example.py",
+      "line_start": 1,
+      "line_end": 1,
+      "snippet": "user = get_user(user_id)",
+      "confidence": "high"
+    },
+    {
+      "file_path": "src/example.py",
+      "line_start": 1,
+      "line_end": 1,
+      "snippet": "user = get_user(user_id)",
+      "confidence": "medium"
+    }
+  ],
+  "files_examined": 14,
+  "diff": "--- a/src/example.py\n+++ b/src/example.py\n@@ -1,1 +1,1 @@\n-user = get_user(user_id)\n+user = get_user_by_id(user_id)\n",
+  "provenance": {
+    "quality_score": 0.87,
+    "certificate_class": "converged",
+    "disagreement_record": "https://sneferu.example/runs/mock-run/disagreements",
+    "models": ["mock-model-a", "mock-model-b"],
+    "extra": {}
+  }
+}

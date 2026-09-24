@@ -1,0 +1,24 @@
+{
+  "name": "patchline",
+  "app_version": "0.1.0",
+  "runtime_test_command": "python3 -m uvicorn patchline.app:app --host 127.0.0.1 --port {port}",
+  "runtime_test_mode": "playwright",
+  "browser_smoke_plan": "test_plan.md",
+  "health_endpoint": "/healthz?deep=1",
+  "assets": {
+    "include": [
+      "src/patchline/templates/**/*.html",
+      "src/patchline/static/**/*.css",
+      "src/patchline/static/**/*.js"
+    ],
+    "manifest": "MANIFEST.in",
+    "pyproject_include": "tool.poetry.include"
+  },
+  "env_for_smoke": {
+    "ENGINE_MODE": "mock",
+    "DEMO_MODE": "true",
+    "DATABASE_URL": "sqlite:///./smoke.db",
+    "SESSION_SECRET": "smoke-secret",
+    "DEFAULT_LANGUAGE": "python"
+  }
+}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Jobs — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="jobs-heading">
+  <h1 id="jobs-heading">Jobs console</h1>
+  <p role="status">
+    Worker heartbeat:
+    {% if heartbeat_age is none %}<span class="status status-unknown">unknown (worker not running?)</span>
+    {% elif heartbeat_age < 120 %}<span class="status status-healthy">healthy ({{ heartbeat_age }}s ago)</span>
+    {% else %}<span class="status status-stale">stale ({{ heartbeat_age }}s ago)</span>{% endif %}
+  </p>
+  {% if engine_failures and engine_failures >= 3 %}
+  <div class="alert error" role="alert">The engine has been unreachable for {{ engine_failures }} consecutive job failures.</div>
+  {% endif %}
+  {% if items %}
+  <div class="table-wrap" role="region" aria-live="polite" aria-label="Jobs">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">#</th><th scope="col">Type</th><th scope="col">Repository</th><th scope="col">Branch</th>
+          <th scope="col">State</th><th scope="col">Priority</th><th scope="col">Last error</th><th scope="col">Created</th><th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.job.id }}</td>
+          <td>scan ({{ item.job.purpose }})</td>
+          <td>{{ item.repo_full_name }}</td>
+          <td>{{ item.job.branch }}</td>
+          <td><span class="status status-{{ item.job.status }}">{{ item.job.status }}</span></td>
+          <td>{{ item.job.priority }}</td>
+          <td class="muted">{% if item.job.error_message %}{{ item.job.error_message[:160] }}{% endif %}</td>
+          <td>{{ item.job.created_at }}</td>
+          <td>
+            {% if item.job.status in ['failed', 'skipped_language'] %}
+            <form method="post" action="/jobs/{{ item.job.id }}/retry" class="inline-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+              <button type="submit" class="button small">Retry</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty" role="status"><p>No jobs yet.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

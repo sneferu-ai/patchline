@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Coverage — {{ repo.full_name }}{% endblock %}
+{% block content %}
+<section aria-labelledby="repo-coverage-heading">
+  <h1 id="repo-coverage-heading">Coverage: {{ repo.full_name }}</h1>
+  {% if items %}
+  <div class="table-wrap" role="region" aria-live="polite" aria-label="Per-entry coverage for this repository">
+    <table>
+      <thead>
+        <tr><th scope="col">Entry</th><th scope="col">Language</th><th scope="col">Status</th><th scope="col">Updated</th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{% if item.entry %}<a href="/entries/{{ item.entry.id }}/coverage">{{ item.entry.title }}</a>{% else %}(removed entry){% endif %}</td>
+          <td>{{ item.entry.language if item.entry else '—' }}</td>
+          <td><span class="status status-{{ item.status }}">{{ item.label }}</span></td>
+          <td>{{ item.last_updated_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty" role="status"><p>No entries have scanned this repository yet.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

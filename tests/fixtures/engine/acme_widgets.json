@@ -1,0 +1,36 @@
+{
+  "fixture_version": "1.0",
+  "patterns": [{"kind": "symbol_rename", "old": "get_user", "new": "get_user_by_id"}],
+  "occurrences": [
+    {
+      "file_path": "src/client/api.py",
+      "line_start": 5,
+      "line_end": 5,
+      "snippet": "    user = get_user(user_id)",
+      "confidence": "high"
+    },
+    {
+      "file_path": "src/client/api.py",
+      "line_start": 5,
+      "line_end": 5,
+      "snippet": "    user = get_user(user_id)",
+      "confidence": "medium"
+    },
+    {
+      "file_path": "src/client/api.py",
+      "line_start": 5,
+      "line_end": 5,
+      "snippet": "    user = get_user(user_id)",
+      "confidence": "low"
+    }
+  ],
+  "files_examined": 21,
+  "diff": "--- a/src/client/api.py\n+++ b/src/client/api.py\n@@ -4,3 +4,3 @@\n def load_user(user_id):\n-    user = get_user(user_id)\n+    user = get_user_by_id(user_id)\n     return user\n",
+  "provenance": {
+    "quality_score": 0.91,
+    "certificate_class": "converged",
+    "disagreement_record": "https://sneferu.example/runs/acme-run/disagreements",
+    "models": ["mock-model-a", "mock-model-b"],
+    "extra": {}
+  }
+}

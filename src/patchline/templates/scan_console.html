@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Scan — {{ entry.title }}{% endblock %}
+{% block content %}
+<section aria-labelledby="scan-heading">
+  <h1 id="scan-heading">Scan console: {{ entry.title }}</h1>
+  <p class="note">Remediation and PR dispatch operate on the default branch only. Other branch results are informational.</p>
+  <form method="post" action="/entries/{{ entry.id }}/scan">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="button primary"{% if entry.status != 'ready' %} disabled{% endif %}>Scan connected repositories</button>
+  </form>
+  <div id="scan-cards"
+       hx-get="/entries/{{ entry.id }}/scan/cards"
+       hx-trigger="every 2s"
+       hx-swap="innerHTML"
+       aria-live="polite"
+       aria-busy="false">
+    {% include "scan_cards.html" %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ status }} — Patchline{% endblock %}
+{% block content %}
+<section class="panel narrow" aria-labelledby="error-heading">
+  <h1 id="error-heading">{{ status }}</h1>
+  <p role="alert">{{ message }}</p>
+  <p><a class="button" href="/">Back to coverage</a> <a class="button" href="/login">Sign in</a></p>
+</section>
+{% endblock %}

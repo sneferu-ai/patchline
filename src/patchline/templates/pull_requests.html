@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Pull requests — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="prs-heading">
+  <h1 id="prs-heading">Pull requests</h1>
+  {% if synced %}<div class="alert success" role="status">Pull request states synced with GitHub.</div>{% endif %}
+  <form method="post" action="/pull-requests/sync">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="submit" class="button">Sync states</button>
+  </form>
+  {% if items %}
+  <div class="table-wrap" role="region" aria-live="polite" aria-label="Pull requests">
+    <table>
+      <thead>
+        <tr><th scope="col">Repository</th><th scope="col">Entry</th><th scope="col">PR</th><th scope="col">State</th><th scope="col">Opened</th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td>{{ item.repo_full_name }}</td>
+          <td>{{ item.entry_title }}</td>
+          <td>
+            {% if item.row.pr_url %}<a href="{{ item.row.pr_url }}">#{{ item.row.pr_number }}</a>{% else %}—{% endif %}
+            {% if item.manual %}<span class="badge">manual</span>{% endif %}
+          </td>
+          <td><span class="status status-{{ item.row.state }}">{{ item.row.state }}</span></td>
+          <td>{{ item.row.opened_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty" role="status"><p>No pull requests yet.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

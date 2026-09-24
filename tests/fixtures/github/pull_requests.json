@@ -1,0 +1,21 @@
+{
+  "fixtures_version": "1.0",
+  "pull_requests": [
+    {
+      "number": 42,
+      "repo_full_name": "acme/widgets",
+      "state": "open",
+      "url": "https://github.com/acme/widgets/pull/42",
+      "head_branch": "patchline/rename-get-user-20260805-abc12345",
+      "merged_at": null
+    },
+    {
+      "number": 43,
+      "repo_full_name": "globex/portal",
+      "state": "closed",
+      "url": "https://github.com/globex/portal/pull/43",
+      "head_branch": "patchline/rename-get-user-20260805-def67890",
+      "merged_at": "2026-08-04T12:00:00+00:00"
+    }
+  ]
+}

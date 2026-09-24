@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Repositories — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="repos-heading">
+  <h1 id="repos-heading">Repositories</h1>
+  {% if saved %}<div class="alert success" role="status">Branch configuration saved.</div>{% endif %}
+  {% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}
+  {% if groups %}
+    {% for group in groups %}
+    <details class="panel" {% if loop.first %}open{% endif %}>
+      <summary>
+        <strong>{{ group.installation.account_login if group.installation else 'Unassigned' }}</strong>
+        — <span class="status status-{{ group.installation.connection_state if group.installation else 'unknown' }}">{{ group.installation.connection_state if group.installation else 'unknown' }}</span>
+        — {{ group.repositories | length }} repositor{{ 'y' if group.repositories | length == 1 else 'ies' }}
+      </summary>
+      <div class="table-wrap" role="region" aria-live="polite" aria-label="Repositories for {{ group.installation.account_login if group.installation else 'unassigned' }}">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Repository</th><th scope="col">State</th><th scope="col">Language</th>
+              <th scope="col">Scan branches</th><th scope="col">Last scan</th><th scope="col">Configure</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for repo in group.repositories %}
+            <tr{% if repo.connection_state != 'active' %} class="readonly"{% endif %}>
+              <td>{{ repo.full_name }}</td>
+              <td><span class="status status-{{ repo.connection_state }}">{{ repo.connection_state }}</span></td>
+              <td>{{ repo.primary_language or '—' }}</td>
+              <td>{{ branches_of(repo) | join(', ') }}</td>
+              <td>{{ repo.last_scan_at or 'never' }}</td>
+              <td>
+                {% if repo.connection_state == 'active' %}
+                <form method="post" action="/repositories/{{ repo.id }}/branches" class="inline-form">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                  <label class="visually-hidden" for="branches-{{ repo.id }}">Scan branches for {{ repo.full_name }} (comma separated, max 10)</label>
+                  <input id="branches-{{ repo.id }}" type="text" name="branches" value="{{ branches_of(repo) | join(', ') }}" maxlength="500">
+                  <button type="submit" class="button small">Save</button>
+                </form>
+                {% else %}
+                <span aria-label="read-only">read-only</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </details>
+    {% endfor %}
+  {% else %}
+  <div class="empty" role="status"><p>No repositories connected yet. <a href="/connections/setup">Set up a connection</a>.</p></div>
+  {% endif %}
+</section>
+{% endblock %}

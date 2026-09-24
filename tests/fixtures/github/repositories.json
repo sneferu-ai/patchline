@@ -1,0 +1,35 @@
+{
+  "fixtures_version": "1.0",
+  "repositories": [
+    {
+      "installation_id": 77001,
+      "full_name": "acme/widgets",
+      "default_branch": "main",
+      "primary_language": "python",
+      "branches": ["main", "release-1.0"],
+      "files": {
+        "src/client/api.py": "\"\"\"Acme Widgets API client.\"\"\"\n\n\ndef load_user(user_id):\n    user = get_user(user_id)\n    return user\n"
+      }
+    },
+    {
+      "installation_id": 77001,
+      "full_name": "acme/gadgets",
+      "default_branch": "main",
+      "primary_language": "go",
+      "branches": ["main"],
+      "files": {
+        "main.go": "package main\n\nfunc main() {}\n"
+      }
+    },
+    {
+      "installation_id": 77002,
+      "full_name": "globex/portal",
+      "default_branch": "trunk",
+      "primary_language": "python",
+      "branches": ["trunk"],
+      "files": {
+        "src/example.py": "user = get_user(user_id)\n"
+      }
+    }
+  ]
+}

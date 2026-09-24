@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Coverage — Patchline{% endblock %}
+{% block content %}
+<section aria-labelledby="coverage-heading">
+  <h1 id="coverage-heading">Coverage board</h1>
+  <p class="note">Verification is best-effort — the "migrated" status confirms absence of the old pattern at scan time, not that the exact approved remediation was applied. Re-scan manually to confirm current state.</p>
+  {% if items %}
+  <div class="table-wrap" role="region" aria-live="polite" aria-label="Cross-entry coverage roll-up">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Repository</th>
+          <th scope="col">Installation account</th>
+          <th scope="col">Connection</th>
+          <th scope="col">Open changes</th>
+          <th scope="col">Migrated</th>
+          <th scope="col">Not yet scanned</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td><a href="/repositories/{{ item.id }}/coverage">{{ item.full_name }}</a></td>
+          <td>{{ item.account }}</td>
+          <td><span class="status status-{{ item.connection_state }}">{{ item.connection_state }}</span></td>
+          <td>{{ item.open_changes }}</td>
+          <td>{{ item.migrated }}</td>
+          <td>{{ item.not_scanned }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty" role="status">
+    <p>No customer repositories are connected yet.</p>
+    <p><a class="button primary" href="/connections/setup">Connect a repository</a></p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

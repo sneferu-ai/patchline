@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}New change entry — Patchline{% endblock %}
+{% block content %}
+<section class="narrow" aria-labelledby="entry-heading">
+  <h1 id="entry-heading">New change entry</h1>
+  <p class="note">Describe the API change in two prose fields. Patchline — never you — derives the searchable patterns. Entries become immutable once ready.</p>
+  <form method="post" action="/entries/new" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="field">
+      <label for="title">Title (1–200 characters)</label>
+      <input id="title" name="title" type="text" required maxlength="200" value="{{ values.get('title', '') }}"{% if errors.get('title') %} aria-invalid="true" aria-describedby="err-title"{% endif %}>
+      {% if errors.get('title') %}<p class="field-error" id="err-title" role="alert">{{ errors['title'] }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label for="prior_api_shape">What the API used to look like (1–5000 characters)</label>
+      <textarea id="prior_api_shape" name="prior_api_shape" rows="8" required maxlength="5000"{% if errors.get('prior_api_shape') %} aria-invalid="true" aria-describedby="err-prior"{% endif %}>{{ values.get('prior_api_shape', '') }}</textarea>
+      <p class="hint">Include function signatures, parameter names, return shapes, and usage patterns. Example: "The function get_user(id) accepts a numeric user ID and returns a User object with fields: id, name, email."</p>
+      {% if errors.get('prior_api_shape') %}<p class="field-error" id="err-prior" role="alert">{{ errors['prior_api_shape'] }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label for="target_contract">What callers must do now (1–5000 characters)</label>
+      <textarea id="target_contract" name="target_contract" rows="8" required maxlength="5000"{% if errors.get('target_contract') %} aria-invalid="true" aria-describedby="err-target"{% endif %}>{{ values.get('target_contract', '') }}</textarea>
+      <p class="hint">Example: "The function is now get_user_by_id(id) and returns a User object with fields: id, name, email, created_at. The old function name is deprecated."</p>
+      {% if errors.get('target_contract') %}<p class="field-error" id="err-target" role="alert">{{ errors['target_contract'] }}</p>{% endif %}
+    </div>
+    <div class="field">
+      <label for="language">Language</label>
+      <select id="language" name="language"{% if errors.get('language') %} aria-invalid="true" aria-describedby="err-language"{% endif %}>
+        {% for pack in languages %}
+        <option value="{{ pack }}"{% if (values.get('language') or default_language) == pack %} selected{% endif %}>{{ pack }}</option>
+        {% endfor %}
+      </select>
+      {% if errors.get('language') %}<p class="field-error" id="err-language" role="alert">{{ errors['language'] }}</p>{% endif %}
+    </div>
+    <button type="submit" class="button primary">Create entry</button>
+  </form>
+</section>
+{% endblock %}
