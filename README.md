@@ -1,6 +1,7 @@
 <div align="center">
 
-# Patchline
+
+<img width="107" height="46" alt="image" src="https://github.com/user-attachments/assets/e9321b5f-ffd6-4c54-96b1-2931d57223f9" />
 
 **Your API changelog, turned into pull requests in your customers' code.**
 
@@ -100,7 +101,8 @@ Every remediation carries the engine's provenance: run, quality score, certifica
 
 ---
 
-**Built by [Sneferu](https://sneferu.ai)**
+<img width="299"  alt="image" src="https://github.com/user-attachments/assets/196e7aab-a19b-4cfc-826d-b3bf46b73eba" />
+
 
 <sub>README by Claude (Anthropic). The screenshots show demo mode with fixture repositories and a mock engine.</sub>
 
